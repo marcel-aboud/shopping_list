@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مذكرات المشتريات</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#262620">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="المشتريات">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F2F0E9;
+    --surface: #FCFBF7;
+    --surface-raised: #FFFFFF;
+    --ink: #262620;
+    --ink-muted: #706E63;
+    --ink-faint: #A7A497;
+    --line: #DEDACB;
+    --line-soft: #EAE7DA;
+    --accent-work: #2B6F76;
+    --accent-work-soft: #DCEAEA;
+    --accent-home: #A9702B;
+    --accent-home-soft: #F0E3CC;
+    --danger: #A6392F;
+    --danger-soft: #F3DEDA;
+    --radius-s: 10px;
+    --radius-m: 16px;
+    --radius-l: 22px;
+    --shadow: 0 1px 2px rgba(38,38,32,0.06), 0 8px 24px -12px rgba(38,38,32,0.18);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1B1C17;
+      --surface: #232420;
+      --surface-raised: #2A2B25;
+      --ink: #ECE9DD;
+      --ink-muted: #A9A697;
+      --ink-faint: #736F60;
+      --line: #3B3B32;
+      --line-soft: #302F28;
+      --accent-work: #6BB8BD;
+      --accent-work-soft: #253A3B;
+      --accent-home: #E0A65B;
+      --accent-home-soft: #3B3020;
+      --danger: #E08579;
+      --danger-soft: #3B2622;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1B1C17;
+    --surface: #232420;
+    --surface-raised: #2A2B25;
+    --ink: #ECE9DD;
+    --ink-muted: #A9A697;
+    --ink-faint: #736F60;
+    --line: #3B3B32;
+    --line-soft: #302F28;
+    --accent-work: #6BB8BD;
+    --accent-work-soft: #253A3B;
+    --accent-home: #E0A65B;
+    --accent-home-soft: #3B3020;
+    --danger: #E08579;
+    --danger-soft: #3B2622;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Cairo', 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    min-height: 100%;
+  }
+  [dir="ltr"] body { font-family: 'Cairo', system-ui, sans-serif; }
+
+  button, input, textarea, select { font-family: inherit; }
+  button { cursor: pointer; }
+  input:focus-visible, textarea:focus-visible, button:focus-visible, select:focus-visible {
+    outline: 2px solid var(--accent-work);
+    outline-offset: 2px;
+  }
+
+  #app { max-width: 640px; margin: 0 auto; padding: 20px 16px 96px; }
+
+  /* Top bar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    gap: 12px;
+  }
+  .back-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: none; color: var(--ink-muted);
+    font-size: 15px; font-weight: 600; padding: 8px 4px;
+  }
+  .back-btn svg { width: 20px; height: 20px; transform: scaleX(var(--flip, 1)); }
+  [dir="rtl"] .back-btn svg { --flip: -1; }
+
+  .lang-toggle {
+    background: var(--surface-raised);
+    border: 1px solid var(--line);
+    color: var(--ink-muted);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 7px 14px;
+    border-radius: 999px;
+  }
+  .lang-toggle:active { transform: scale(0.96); }
+
+  /* Home */
+  .home-title {
+    font-size: 26px;
+    font-weight: 800;
+    margin: 4px 0 2px;
+  }
+  .home-sub {
+    color: var(--ink-muted);
+    font-size: 14.5px;
+    margin: 0 0 26px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 420px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+  .section-card {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius-l);
+    padding: 22px 18px;
+    text-align: start;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .section-card::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0; top: 0; bottom: 0;
+    width: 4px;
+  }
+  .section-card.work::before { background: var(--accent-work); }
+  .section-card.home::before { background: var(--accent-home); }
+  .section-card:active { transform: scale(0.98); }
+  .card-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-icon svg { width: 22px; height: 22px; }
+  .section-card.work .card-icon { background: var(--accent-work-soft); color: var(--accent-work); }
+  .section-card.home .card-icon { background: var(--accent-home-soft); color: var(--accent-home); }
+  .card-name { font-size: 18px; font-weight: 700; }
+  .card-meta { font-size: 13px; color: var(--ink-muted); }
+
+  /* Section header + stats */
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin: 2px 0 16px;
+  }
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .stat {
+    padding: 14px 10px;
+    text-align: center;
+    border-inline-start: 1px solid var(--line-soft);
+  }
+  .stat:first-child { border-inline-start: none; }
+  .stat-value { font-size: 17px; font-weight: 800; }
+  .stat-label { font-size: 11.5px; color: var(--ink-muted); margin-top: 2px; }
+  .last-purchase {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin: -4px 0 16px;
+    padding: 0 2px;
+  }
+  .last-purchase b { color: var(--ink); font-weight: 700; }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .search-box {
+    flex: 1 1 160px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    padding: 10px 12px;
+  }
+  .search-box svg { width: 16px; height: 16px; color: var(--ink-faint); flex-shrink: 0; }
+  .search-box input {
+    border: none; background: none; outline: none;
+    font-size: 14.5px; color: var(--ink); width: 100%;
+  }
+  .search-box input::placeholder { color: var(--ink-faint); }
+  select.ctrl, input.date-ctrl {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: var(--radius-s);
+    padding: 10px 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+  .clear-filter-btn {
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-muted);
+    border-radius: var(--radius-s);
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .add-btn {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius-s);
+    padding: 14px;
+    font-size: 15.5px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .add-btn svg { width: 18px; height: 18px; }
+  .add-btn:active { transform: scale(0.98); }
+
+  /* List */
+  .list { display: flex; flex-direction: column; gap: 8px; }
+  .row {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+  }
+  .row-accent { width: 4px; flex-shrink: 0; }
+  .row.work .row-accent { background: var(--accent-work); }
+  .row.home .row-accent { background: var(--accent-home); }
+  .row-main {
+    flex: 1;
+    padding: 13px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    text-align: start;
+    background: none;
+    border: none;
+    min-width: 0;
+  }
+  .row-info { min-width: 0; }
+  .row-item { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-meta { font-size: 12.5px; color: var(--ink-muted); margin-top: 3px; }
+  .row-notes { font-size: 12.5px; color: var(--ink-faint); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-price { font-size: 15.5px; font-weight: 800; flex-shrink: 0; }
+  .row-del {
+    flex-shrink: 0;
+    width: 44px;
+    display: flex; align-items: center; justify-content: center;
+    background: none;
+    border-inline-start: 1px solid var(--line-soft);
+    color: var(--ink-faint);
+  }
+  .row-del svg { width: 17px; height: 17px; }
+  .row-del:active { color: var(--danger); }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--ink-muted);
+  }
+  .empty-state svg { width: 40px; height: 40px; color: var(--ink-faint); margin-bottom: 12px; }
+  .empty-state p:first-of-type { font-weight: 700; color: var(--ink); font-size: 15.5px; margin: 0 0 4px; }
+  .empty-state p { margin: 0; font-size: 13.5px; }
+
+  /* Modal */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(20,20,16,0.44);
+    display: flex; align-items: flex-end; justify-content: center;
+    z-index: 50;
+    padding: 0;
+    opacity: 0;
+    animation: fadeIn 0.18s ease forwards;
+  }
+  @media (min-width: 560px) {
+    .overlay { align-items: center; padding: 20px; }
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+  .modal {
+    background: var(--surface-raised);
+    width: 100%;
+    max-width: 480px;
+    border-radius: 22px 22px 0 0;
+    padding: 22px 20px calc(22px + env(safe-area-inset-bottom, 0px));
+    box-shadow: var(--shadow);
+    transform: translateY(16px);
+    animation: slideUp 0.2s cubic-bezier(.2,.8,.3,1) forwards;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+  @media (min-width: 560px) {
+    .modal { border-radius: 22px; padding: 24px; }
+  }
+  @keyframes slideUp { to { transform: translateY(0); } }
+  .modal h2 { font-size: 18px; font-weight: 800; margin: 0 0 18px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 700; color: var(--ink-muted); margin-bottom: 6px; }
+  .field input, .field textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink);
+    border-radius: var(--radius-s);
+    padding: 12px 13px;
+    font-size: 15px;
+  }
+  .field textarea { resize: vertical; min-height: 64px; }
+  .field input.err, .field textarea.err { border-color: var(--danger); }
+  .field-err { color: var(--danger); font-size: 12px; margin-top: 5px; display: none; }
+  .field-err.show { display: block; }
+  .autotime {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-s);
+    padding: 11px 13px;
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-bottom: 18px;
+  }
+  .autotime svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .autotime b { color: var(--ink); font-weight: 700; }
+  .modal-actions { display: flex; gap: 10px; }
+  .btn { flex: 1; border: none; border-radius: var(--radius-s); padding: 13px; font-size: 15px; font-weight: 700; }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary { background: var(--ink); color: var(--bg); }
+  .btn-secondary { background: var(--bg); color: var(--ink-muted); border: 1px solid var(--line); }
+  .btn-danger { background: var(--danger); color: #fff; }
+
+  .confirm-modal { max-width: 360px; text-align: center; border-radius: 22px; }
+  .confirm-modal .icon-wrap {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--danger-soft); color: var(--danger);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+  }
+  .confirm-modal .icon-wrap svg { width: 22px; height: 22px; }
+  .confirm-modal h2 { text-align: center; }
+  .confirm-modal p { color: var(--ink-muted); font-size: 14px; margin: 0 0 20px; }
+
+  .toast {
+    position: fixed;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    left: 50%; transform: translateX(-50%);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 11px 20px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    z-index: 60;
+    opacity: 0;
+    animation: toastIn 0.2s ease forwards, toastOut 0.2s ease 1.8s forwards;
+    white-space: nowrap;
+  }
+  @keyframes toastIn { to { opacity: 1; } }
+  @keyframes toastOut { to { opacity: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .overlay, .modal, .toast { animation: none !important; opacity: 1 !important; transform: none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------- i18n ---------------- */
+  var STR = {
+    ar: {
+      appTitle: "مذكرات المشتريات",
+      appSub: "سجّل مشترياتك بسرعة، في العمل والمنزل",
+      work: "العمل", home: "المنزل",
+      cardMetaCount: function(n){ return n + " هذا الشهر"; },
+      statCount: "العمليات", statToday: "إجمالي اليوم", statMonth: "إجمالي الشهر", statTotal: "الإجمالي الكلي",
+      lastPurchase: "آخر عملية:", noneYet: "لا يوجد بعد",
+      addBtn: "إضافة عملية شراء",
+      searchPlaceholder: "ابحث عن مادة…",
+      sortNewest: "الأحدث أولًا", sortOldest: "الأقدم أولًا",
+      clearFilter: "إلغاء التصفية",
+      emptyTitle: "لا توجد مشتريات بعد",
+      emptyHint: "اضغط على «إضافة عملية شراء» لتسجيل أول عملية",
+      emptySearchTitle: "لا نتائج",
+      emptySearchHint: "لم يتم العثور على مشتريات مطابقة",
+      modalAddTitle: "عملية شراء جديدة", modalEditTitle: "تعديل عملية الشراء",
+      itemName: "اسم المادة", itemPlaceholder: "مثال: كابل كهربائي",
+      price: "السعر", pricePlaceholder: "0",
+      notes: "ملاحظات (اختياري)", notesPlaceholder: "أضف ملاحظة…",
+      autoTimeLabel: "التاريخ والوقت:",
+      save: "حفظ", cancel: "إلغاء",
+      requiredItem: "يرجى إدخال اسم المادة",
+      requiredPrice: "يرجى إدخال سعر صالح (0 أو أكبر)",
+      deleteTitle: "حذف عملية الشراء؟",
+      deleteMsg: "لا يمكن التراجع عن هذا الإجراء بعد الحذف.",
+      deleteYes: "حذف", deleteNo: "إلغاء",
+      savedToast: "تم الحفظ", updatedToast: "تم التحديث", deletedToast: "تم الحذف",
+      langBtn: "EN",
+      currencyNote: ""
+    },
+    en: {
+      appTitle: "Purchase Journal",
+      appSub: "Log what you buy, at work and at home",
+      work: "Work", home: "Home",
+      cardMetaCount: function(n){ return n + " this month"; },
+      statCount: "Entries", statToday: "Today's total", statMonth: "This month", statTotal: "All-time total",
+      lastPurchase: "Last purchase:", noneYet: "None yet",
+      addBtn: "Add a purchase",
+      searchPlaceholder: "Search an item…",
+      sortNewest: "Newest first", sortOldest: "Oldest first",
+      clearFilter: "Clear filter",
+      emptyTitle: "No purchases yet",
+      emptyHint: "Tap \"Add a purchase\" to log the first one",
+      emptySearchTitle: "No results",
+      emptySearchHint: "No purchases match your search",
+      modalAddTitle: "New purchase", modalEditTitle: "Edit purchase",
+      itemName: "Item name", itemPlaceholder: "e.g. Power cable",
+      price: "Price", pricePlaceholder: "0",
+      notes: "Notes (optional)", notesPlaceholder: "Add a note…",
+      autoTimeLabel: "Date & time:",
+      save: "Save", cancel: "Cancel",
+      requiredItem: "Please enter an item name",
+      requiredPrice: "Please enter a valid price (0 or more)",
+      deleteTitle: "Delete this purchase?",
+      deleteMsg: "This can't be undone once deleted.",
+      deleteYes: "Delete", deleteNo: "Cancel",
+      savedToast: "Saved", updatedToast: "Updated", deletedToast: "Deleted",
+      langBtn: "AR",
+      currencyNote: ""
+    }
+  };
+
+  /* ---------------- Icons ---------------- */
+  var ICONS = {
+    briefcase: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>',
+    home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9"/></svg>',
+    back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>',
+    search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+    plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>',
+    trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 1 13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-13"/></svg>',
+    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+    empty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16M6 8l1 11a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-11M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>',
+    warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 2.5 17a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>'
+  };
+
+  /* ---------------- Storage (IndexedDB, localStorage fallback) ---------------- */
+  var DB_NAME = "purchase_journal_db";
+  var STORE = "purchases";
+  var db = null;
+  var useFallback = false;
+  var FALLBACK_KEY = "purchase_journal_fallback_v1";
+
+  function openDB() {
+    return new Promise(function (resolve) {
+      if (!window.indexedDB) { useFallback = true; return resolve(null); }
+      var req;
+      try {
+        req = indexedDB.open(DB_NAME, 1);
+      } catch (e) { useFallback = true; return resolve(null); }
+      req.onupgradeneeded = function (e) {
+        var _db = e.target.result;
+        if (!_db.objectStoreNames.contains(STORE)) {
+          var os = _db.createObjectStore(STORE, { keyPath: "id" });
+          os.createIndex("category", "category", { unique: false });
+        }
+      };
+      req.onsuccess = function (e) { db = e.target.result; resolve(db); };
+      req.onerror = function () { useFallback = true; resolve(null); };
+    });
+  }
+
+  function fallbackRead() {
+    try {
+      var raw = localStorage.getItem(FALLBACK_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+  function fallbackWrite(list) {
+    try { localStorage.setItem(FALLBACK_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+
+  function dbGetAll() {
+    return new Promise(function (resolve) {
+      if (useFallback || !db) return resolve(fallbackRead());
+      try {
+        var tx = db.transaction(STORE, "readonly");
+        var req = tx.objectStore(STORE).getAll();
+        req.onsuccess = function () { resolve(req.result || []); };
+        req.onerror = function () { resolve(fallbackRead()); };
+      } catch (e) { resolve(fallbackRead()); }
+    });
+  }
+  function dbPut(record) {
+    return new Promise(function (resolve) {
+      if (useFallback || !db) {
+        var list = fallbackRead();
+        var idx = list.findIndex(function (p) { return p.id === record.id; });
+        if (idx >= 0) list[idx] = record; else list.push(record);
+        fallbackWrite(list);
+        return resolve(record);
+      }
+      try {
+        var tx = db.transaction(STORE, "readwrite");
+        tx.objectStore(STORE).put(record);
+        tx.oncomplete = function () { resolve(record); };
+        tx.onerror = function () { resolve(record); };
+      } catch (e) { resolve(record); }
+    });
+  }
+  function dbDelete(id) {
+    return new Promise(function (resolve) {
+      if (useFallback || !db) {
+        var list = fallbackRead().filter(function (p) { return p.id !== id; });
+        fallbackWrite(list);
+        return resolve();
+      }
+      try {
+        var tx = db.transaction(STORE, "readwrite");
+        tx.objectStore(STORE).delete(id);
+        tx.oncomplete = function () { resolve(); };
+        tx.onerror = function () { resolve(); };
+      } catch (e) { resolve(); }
+    });
+  }
+
+  /* ---------------- State ---------------- */
+  var state = {
+    view: "home",          // home | section
+    section: "work",       // work | home
+    lang: (function(){ try { return localStorage.getItem("pj_lang") || "ar"; } catch(e){ return "ar"; } })(),
+    search: "",
+    sort: "newest",
+    dateFilter: "",
+    purchases: [],
+    modal: null,           // null | {mode:'add'|'edit', id?}
+    confirmDeleteId: null,
+    toast: null
+  };
+
+  function T() { return STR[state.lang]; }
+
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+  function todayStr(d) {
+    d = d || new Date();
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+  function monthStr(d) {
+    d = d || new Date();
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1);
+  }
+  function fmtDateDisplay(isoDate) {
+    // isoDate: YYYY-MM-DD -> DD/MM/YYYY
+    var parts = isoDate.split("-");
+    return parts[2] + "/" + parts[1] + "/" + parts[0];
+  }
+  function fmtPrice(n) {
+    var num = Number(n) || 0;
+    return num.toLocaleString(state.lang === "ar" ? "ar-EG" : "en-US", { maximumFractionDigits: 2 });
+  }
+  function uid() {
+    return "p_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 8);
+  }
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  /* ---------------- Derived data ---------------- */
+  function sectionPurchases(cat) {
+    return state.purchases.filter(function (p) { return p.category === cat; });
+  }
+  function statsFor(cat) {
+    var list = sectionPurchases(cat);
+    var t = todayStr(), m = monthStr();
+    var todayTotal = 0, monthTotal = 0, allTotal = 0;
+    var last = null;
+    list.forEach(function (p) {
+      allTotal += Number(p.price) || 0;
+      if (p.purchase_date === t) todayTotal += Number(p.price) || 0;
+      if (p.purchase_date && p.purchase_date.slice(0, 7) === m) monthTotal += Number(p.price) || 0;
+      if (!last || p.created_at > last.created_at) last = p;
+    });
+    return { count: list.length, todayTotal: todayTotal, monthTotal: monthTotal, allTotal: allTotal, last: last };
+  }
+  function filteredList(cat) {
+    var list = sectionPurchases(cat);
+    var q = state.search.trim().toLowerCase();
+    if (q) list = list.filter(function (p) { return (p.item_name || "").toLowerCase().indexOf(q) !== -1; });
+    if (state.dateFilter) list = list.filter(function (p) { return p.purchase_date === state.dateFilter; });
+    list = list.slice().sort(function (a, b) {
+      var ka = a.created_at, kb = b.created_at;
+      return state.sort === "newest" ? (kb < ka ? -1 : kb > ka ? 1 : 0) : (ka < kb ? -1 : ka > kb ? 1 : 0);
+    });
+    return list;
+  }
+
+  /* ---------------- Rendering ---------------- */
+  var app = document.getElementById("app");
+
+  function render() {
+    document.documentElement.lang = state.lang;
+    document.documentElement.dir = state.lang === "ar" ? "rtl" : "ltr";
+    var t = T();
+    var html = "";
+
+    if (state.view === "home") {
+      html += renderHome(t);
+    } else {
+      html += renderSection(t, state.section);
+    }
+
+    app.innerHTML = html;
+    bindGlobalEvents();
+
+    if (state.modal) renderModal(t);
+    if (state.confirmDeleteId) renderConfirm(t);
+    if (state.toast) renderToast(state.toast);
+  }
+
+  function renderHome(t) {
+    var wStats = statsFor("work"), hStats = statsFor("home");
+    return (
+      '<div class="topbar">' +
+        '<div></div>' +
+        '<button class="lang-toggle" id="langBtn">' + t.langBtn + '</button>' +
+      '</div>' +
+      '<div class="home-title">' + escapeHtml(t.appTitle) + '</div>' +
+      '<div class="home-sub">' + escapeHtml(t.appSub) + '</div>' +
+      '<div class="cards">' +
+        '<button class="section-card work" data-open="work">' +
+          '<div class="card-icon">' + ICONS.briefcase + '</div>' +
+          '<div><div class="card-name">' + escapeHtml(t.work) + '</div>' +
+          '<div class="card-meta">' + escapeHtml(t.cardMetaCount(wStats.count)) + '</div></div>' +
+        '</button>' +
+        '<button class="section-card home" data-open="home">' +
+          '<div class="card-icon">' + ICONS.home + '</div>' +
+          '<div><div class="card-name">' + escapeHtml(t.home) + '</div>' +
+          '<div class="card-meta">' + escapeHtml(t.cardMetaCount(hStats.count)) + '</div></div>' +
+        '</button>' +
+      '</div>'
+    );
+  }
+
+  function renderSection(t, cat) {
+    var stats = statsFor(cat);
+    var list = filteredList(cat);
+    var lastText = stats.last
+      ? (stats.last.item_name + " · " + fmtDateDisplay(stats.last.purchase_date))
+      : t.noneYet;
+
+    var rows = list.map(function (p) {
+      return (
+        '<div class="row ' + cat + '">' +
+          '<div class="row-accent"></div>' +
+          '<button class="row-main" data-edit="' + p.id + '">' +
+            '<div class="row-info">' +
+              '<div class="row-item">' + escapeHtml(p.item_name) + '</div>' +
+              '<div class="row-meta">' + fmtDateDisplay(p.purchase_date) + ' — ' + escapeHtml(p.purchase_time) + '</div>' +
+              (p.notes ? '<div class="row-notes">' + escapeHtml(p.notes) + '</div>' : '') +
+            '</div>' +
+            '<div class="row-price">' + fmtPrice(p.price) + '</div>' +
+          '</button>' +
+          '<button class="row-del" data-del="' + p.id + '" aria-label="delete">' + ICONS.trash + '</button>' +
+        '</div>'
+      );
+    }).join("");
+
+    var emptyBlock = "";
+    if (list.length === 0) {
+      var hasFilter = state.search || state.dateFilter;
+      emptyBlock =
+        '<div class="empty-state">' + ICONS.empty +
+          '<p>' + escapeHtml(hasFilter ? t.emptySearchTitle : t.emptyTitle) + '</p>' +
+          '<p>' + escapeHtml(hasFilter ? t.emptySearchHint : t.emptyHint) + '</p>' +
+        '</div>';
+    }
+
+    return (
+      '<div class="topbar">' +
+        '<button class="back-btn" id="backBtn">' + ICONS.back + '<span>' + escapeHtml(t.appTitle) + '</span></button>' +
+        '<button class="lang-toggle" id="langBtn">' + t.langBtn + '</button>' +
+      '</div>' +
+      '<div class="section-title">' + escapeHtml(cat === "work" ? t.work : t.home) + '</div>' +
+      '<div class="stats-row">' +
+        '<div class="stat"><div class="stat-value">' + stats.count + '</div><div class="stat-label">' + escapeHtml(t.statCount) + '</div></div>' +
+        '<div class="stat"><div class="stat-value">' + fmtPrice(stats.todayTotal) + '</div><div class="stat-label">' + escapeHtml(t.statToday) + '</div></div>' +
+        '<div class="stat"><div class="stat-value">' + fmtPrice(stats.monthTotal) + '</div><div class="stat-label">' + escapeHtml(t.statMonth) + '</div></div>' +
+      '</div>' +
+      '<div class="last-purchase">' + escapeHtml(t.lastPurchase) + ' <b>' + escapeHtml(lastText) + '</b> &nbsp;·&nbsp; ' + escapeHtml(t.statTotal) + ': <b>' + fmtPrice(stats.allTotal) + '</b></div>' +
+      '<div class="controls">' +
+        '<div class="search-box">' + ICONS.search +
+          '<input type="text" id="searchInput" placeholder="' + escapeHtml(t.searchPlaceholder) + '" value="' + escapeHtml(state.search) + '">' +
+        '</div>' +
+        '<select class="ctrl" id="sortSelect">' +
+          '<option value="newest"' + (state.sort === "newest" ? " selected" : "") + '>' + escapeHtml(t.sortNewest) + '</option>' +
+          '<option value="oldest"' + (state.sort === "oldest" ? " selected" : "") + '>' + escapeHtml(t.sortOldest) + '</option>' +
+        '</select>' +
+        '<input type="date" class="date-ctrl" id="dateFilter" value="' + state.dateFilter + '">' +
+        (state.dateFilter ? '<button class="clear-filter-btn" id="clearFilterBtn">' + escapeHtml(t.clearFilter) + '</button>' : '') +
+      '</div>' +
+      '<button class="add-btn" id="addBtn">' + ICONS.plus + '<span>' + escapeHtml(t.addBtn) + '</span></button>' +
+      '<div class="list">' + rows + '</div>' +
+      emptyBlock
+    );
+  }
+
+  function liveNowText(t) {
+    var d = new Date();
+    return fmtDateDisplay(todayStr(d)) + " — " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  }
+
+  function renderModal(t) {
+    var editing = state.modal.mode === "edit";
+    var record = editing ? state.purchases.find(function (p) { return p.id === state.modal.id; }) : null;
+    var wrap = document.createElement("div");
+    wrap.className = "overlay";
+    wrap.id = "modalOverlay";
+    wrap.innerHTML =
+      '<div class="modal">' +
+        '<h2>' + escapeHtml(editing ? t.modalEditTitle : t.modalAddTitle) + '</h2>' +
+        '<div class="field">' +
+          '<label>' + escapeHtml(t.itemName) + '</label>' +
+          '<input type="text" id="fItem" placeholder="' + escapeHtml(t.itemPlaceholder) + '" value="' + escapeHtml(record ? record.item_name : "") + '">' +
+          '<div class="field-err" id="errItem">' + escapeHtml(t.requiredItem) + '</div>' +
+        '</div>' +
+        '<div class="field">' +
+          '<label>' + escapeHtml(t.price) + '</label>' +
+          '<input type="number" inputmode="decimal" min="0" step="any" id="fPrice" placeholder="' + escapeHtml(t.pricePlaceholder) + '" value="' + (record ? record.price : "") + '">' +
+          '<div class="field-err" id="errPrice">' + escapeHtml(t.requiredPrice) + '</div>' +
+        '</div>' +
+        '<div class="field">' +
+          '<label>' + escapeHtml(t.notes) + '</label>' +
+          '<textarea id="fNotes" placeholder="' + escapeHtml(t.notesPlaceholder) + '">' + escapeHtml(record ? record.notes : "") + '</textarea>' +
+        '</div>' +
+        '<div class="autotime">' + ICONS.clock +
+          '<span>' + escapeHtml(t.autoTimeLabel) + ' <b id="autoTimeVal">' +
+          (editing ? fmtDateDisplay(record.purchase_date) + " — " + record.purchase_time : liveNowText(t)) +
+          '</b></span>' +
+        '</div>' +
+        '<div class="modal-actions">' +
+          '<button class="btn btn-secondary" id="modalCancel">' + escapeHtml(t.cancel) + '</button>' +
+          '<button class="btn btn-primary" id="modalSave">' + escapeHtml(t.save) + '</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+
+    var itemInput = wrap.querySelector("#fItem");
+    var priceInput = wrap.querySelector("#fPrice");
+
+    if (!editing) {
+      var timer = setInterval(function () {
+        var el = wrap.querySelector("#autoTimeVal");
+        if (!el) { clearInterval(timer); return; }
+        el.textContent = liveNowText(t);
+      }, 1000 * 10);
+      wrap.addEventListener("remove", function () { clearInterval(timer); });
+    }
+
+    wrap.querySelector("#modalCancel").onclick = closeModal;
+    wrap.addEventListener("click", function (e) { if (e.target === wrap) closeModal(); });
+    wrap.querySelector("#modalSave").onclick = function () {
+      var name = itemInput.value.trim();
+      var priceVal = priceInput.value;
+      var priceNum = parseFloat(priceVal);
+      var valid = true;
+      if (!name) {
+        itemInput.classList.add("err");
+        wrap.querySelector("#errItem").classList.add("show");
+        valid = false;
+      } else {
+        itemInput.classList.remove("err");
+        wrap.querySelector("#errItem").classList.remove("show");
+      }
+      if (priceVal === "" || isNaN(priceNum) || priceNum < 0) {
+        priceInput.classList.add("err");
+        wrap.querySelector("#errPrice").classList.add("show");
+        valid = false;
+      } else {
+        priceInput.classList.remove("err");
+        wrap.querySelector("#errPrice").classList.remove("show");
+      }
+      if (!valid) return;
+
+      var notes = wrap.querySelector("#fNotes").value.trim();
+      var now = new Date();
+
+      if (editing) {
+        record.item_name = name;
+        record.price = priceNum;
+        record.notes = notes;
+        dbPut(record).then(function () {
+          var idx = state.purchases.findIndex(function (p) { return p.id === record.id; });
+          state.purchases[idx] = record;
+          state.modal = null;
+          state.toast = t.updatedToast;
+          render();
+        });
+      } else {
+        var rec = {
+          id: uid(),
+          category: state.section,
+          item_name: name,
+          price: priceNum,
+          purchase_date: todayStr(now),
+          purchase_time: pad(now.getHours()) + ":" + pad(now.getMinutes()),
+          notes: notes,
+          created_at: now.toISOString()
+        };
+        dbPut(rec).then(function () {
+          state.purchases.push(rec);
+          state.modal = null;
+          state.toast = t.savedToast;
+          render();
+        });
+      }
+    };
+
+    setTimeout(function () { itemInput.focus(); }, 50);
+  }
+
+  function renderConfirm(t) {
+    var wrap = document.createElement("div");
+    wrap.className = "overlay";
+    wrap.id = "confirmOverlay";
+    wrap.innerHTML =
+      '<div class="modal confirm-modal">' +
+        '<div class="icon-wrap">' + ICONS.warn + '</div>' +
+        '<h2>' + escapeHtml(t.deleteTitle) + '</h2>' +
+        '<p>' + escapeHtml(t.deleteMsg) + '</p>' +
+        '<div class="modal-actions">' +
+          '<button class="btn btn-secondary" id="confirmNo">' + escapeHtml(t.deleteNo) + '</button>' +
+          '<button class="btn btn-danger" id="confirmYes">' + escapeHtml(t.deleteYes) + '</button>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+    wrap.addEventListener("click", function (e) { if (e.target === wrap) closeConfirm(); });
+    wrap.querySelector("#confirmNo").onclick = closeConfirm;
+    wrap.querySelector("#confirmYes").onclick = function () {
+      var id = state.confirmDeleteId;
+      dbDelete(id).then(function () {
+        state.purchases = state.purchases.filter(function (p) { return p.id !== id; });
+        state.confirmDeleteId = null;
+        state.toast = t.deletedToast;
+        render();
+      });
+    };
+  }
+
+  function renderToast(msg) {
+    var el = document.createElement("div");
+    el.className = "toast";
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(function () {
+      if (el.parentNode) el.parentNode.removeChild(el);
+      state.toast = null;
+    }, 2000);
+  }
+
+  function closeModal() { state.modal = null; render(); }
+  function closeConfirm() { state.confirmDeleteId = null; render(); }
+
+  /* ---------------- Events ---------------- */
+  function bindGlobalEvents() {
+    var langBtn = document.getElementById("langBtn");
+    if (langBtn) langBtn.onclick = function () {
+      state.lang = state.lang === "ar" ? "en" : "ar";
+      try { localStorage.setItem("pj_lang", state.lang); } catch (e) {}
+      render();
+    };
+
+    var backBtn = document.getElementById("backBtn");
+    if (backBtn) backBtn.onclick = function () {
+      state.view = "home"; state.search = ""; state.dateFilter = "";
+      render();
+    };
+
+    var opens = document.querySelectorAll("[data-open]");
+    opens.forEach(function (btn) {
+      btn.onclick = function () {
+        state.section = btn.getAttribute("data-open");
+        state.view = "section";
+        state.search = ""; state.dateFilter = ""; state.sort = "newest";
+        render();
+      };
+    });
+
+    var addBtn = document.getElementById("addBtn");
+    if (addBtn) addBtn.onclick = function () { state.modal = { mode: "add" }; render(); };
+
+    var searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+      searchInput.oninput = function () {
+        state.search = searchInput.value;
+        renderListOnly();
+      };
+    }
+    var sortSelect = document.getElementById("sortSelect");
+    if (sortSelect) sortSelect.onchange = function () { state.sort = sortSelect.value; render(); };
+
+    var dateFilter = document.getElementById("dateFilter");
+    if (dateFilter) dateFilter.onchange = function () { state.dateFilter = dateFilter.value; render(); };
+
+    var clearFilterBtn = document.getElementById("clearFilterBtn");
+    if (clearFilterBtn) clearFilterBtn.onclick = function () { state.dateFilter = ""; render(); };
+
+    document.querySelectorAll("[data-edit]").forEach(function (btn) {
+      btn.onclick = function () { state.modal = { mode: "edit", id: btn.getAttribute("data-edit") }; render(); };
+    });
+    document.querySelectorAll("[data-del]").forEach(function (btn) {
+      btn.onclick = function (e) {
+        e.stopPropagation();
+        state.confirmDeleteId = btn.getAttribute("data-del");
+        render();
+      };
+    });
+  }
+
+  // Lightweight re-render of just the list while typing in search, to keep focus.
+  function renderListOnly() {
+    var t = T();
+    var listEl = app.querySelector(".list");
+    var list = filteredList(state.section);
+    var rows = list.map(function (p) {
+      return (
+        '<div class="row ' + state.section + '">' +
+          '<div class="row-accent"></div>' +
+          '<button class="row-main" data-edit="' + p.id + '">' +
+            '<div class="row-info">' +
+              '<div class="row-item">' + escapeHtml(p.item_name) + '</div>' +
+              '<div class="row-meta">' + fmtDateDisplay(p.purchase_date) + ' — ' + escapeHtml(p.purchase_time) + '</div>' +
+              (p.notes ? '<div class="row-notes">' + escapeHtml(p.notes) + '</div>' : '') +
+            '</div>' +
+            '<div class="row-price">' + fmtPrice(p.price) + '</div>' +
+          '</button>' +
+          '<button class="row-del" data-del="' + p.id + '" aria-label="delete">' + ICONS.trash + '</button>' +
+        '</div>'
+      );
+    }).join("");
+    if (listEl) listEl.innerHTML = rows;
+    var existingEmpty = app.querySelector(".empty-state");
+    if (existingEmpty) existingEmpty.remove();
+    if (list.length === 0) {
+      var hasFilter = state.search || state.dateFilter;
+      var div = document.createElement("div");
+      div.className = "empty-state";
+      div.innerHTML = ICONS.empty +
+        '<p>' + escapeHtml(hasFilter ? t.emptySearchTitle : t.emptyTitle) + '</p>' +
+        '<p>' + escapeHtml(hasFilter ? t.emptySearchHint : t.emptyHint) + '</p>';
+      app.appendChild(div);
+    }
+    document.querySelectorAll("[data-edit]").forEach(function (btn) {
+      btn.onclick = function () { state.modal = { mode: "edit", id: btn.getAttribute("data-edit") }; render(); };
+    });
+    document.querySelectorAll("[data-del]").forEach(function (btn) {
+      btn.onclick = function (e) {
+        e.stopPropagation();
+        state.confirmDeleteId = btn.getAttribute("data-del");
+        render();
+      };
+    });
+  }
+
+  /* ---------------- Init ---------------- */
+  openDB().then(function () {
+    return dbGetAll();
+  }).then(function (list) {
+    state.purchases = list || [];
+    render();
+  }).catch(function () {
+    render();
+  });
+
+  /* ---------------- Offline support (PWA) ---------------- */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("service-worker.js").catch(function () {
+        // Registration can fail (e.g. opened as a local file); the app still
+        // works fully offline via IndexedDB, it just won't be installable.
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>
