@@ -1,6 +1,6 @@
 // Purchase Journal - service worker
 // Caches the app shell so the app opens and works with no network connection.
-const CACHE_NAME = "purchase-journal-v1";
+const CACHE_NAME = "purchase-journal-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
