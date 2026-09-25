@@ -587,6 +587,7 @@
   }
 
   /* ---------------- State ---------------- */
+  var modalTimeInterval = null;
   var state = {
     view: "home",          // home | section
     section: "work",       // work | home
@@ -675,6 +676,11 @@
 
     app.innerHTML = html;
     bindGlobalEvents();
+
+    // Always clear any leftover overlay (modal/confirm) before possibly
+    // rendering a new one — otherwise a closed overlay stays stuck on screen.
+    document.querySelectorAll(".overlay").forEach(function (el) { el.remove(); });
+    if (modalTimeInterval) { clearInterval(modalTimeInterval); modalTimeInterval = null; }
 
     if (state.modal) renderModal(t);
     if (state.confirmDeleteId) renderConfirm(t);
@@ -811,13 +817,13 @@
     var itemInput = wrap.querySelector("#fItem");
     var priceInput = wrap.querySelector("#fPrice");
 
+    if (modalTimeInterval) { clearInterval(modalTimeInterval); modalTimeInterval = null; }
     if (!editing) {
-      var timer = setInterval(function () {
+      modalTimeInterval = setInterval(function () {
         var el = wrap.querySelector("#autoTimeVal");
-        if (!el) { clearInterval(timer); return; }
+        if (!el) { clearInterval(modalTimeInterval); modalTimeInterval = null; return; }
         el.textContent = liveNowText(t);
       }, 1000 * 10);
-      wrap.addEventListener("remove", function () { clearInterval(timer); });
     }
 
     wrap.querySelector("#modalCancel").onclick = closeModal;
